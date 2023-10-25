@@ -15,3 +15,10 @@ Docker Repo:
 begin to do versioning control with 1.1, 1.2, etc.)
 
 https://hub.docker.com/repository/docker/justinwlin/runpodwhisperx/general
+
+Environment Variable for when working on Mac:
+
+```
+export DEVICE=cpu
+export COMPUTE_TYPE=int8
+```
