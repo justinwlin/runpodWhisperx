@@ -10,6 +10,11 @@ This is a Docker Image that runs the [WhisperX](https://github.com/m-bain/whispe
 }
 ```
 
+## Base Image that this is based off of:
+
+https://github.com/runpod/containers/blob/main/official-templates/base/Dockerfile
+https://hub.docker.com/r/runpod/base
+
 ## How to Build This Docker Image
 
 You can replace anything that is `depot` with docker. I'm just using their service to build for amd64 platform, since I am on an arm64 platform on an M1 Mac.
@@ -273,4 +278,55 @@ def send_synchronous_request_runpod_subtitler(
         raise Exception("No output from Runpod")
 
     return output
+```
+
+# Check the size of the Repo:
+
+```
+(base) justinwlin@justinwlin-mbp ~ % curl -s https://hub.docker.com/v2/repositories/justinwlin/runpodwhisperx/tags/1.1 | jq 'select(.name=="1.1")'
+{
+"creator": 6683897,
+"id": 537338920,
+"images": [
+{
+"architecture": "amd64",
+"features": "",
+"variant": null,
+"digest": "sha256:7f68f2ca1e4106742ef88ed1be53dd4519991a1d8acf1b1a1449736ca184f332",
+"os": "linux",
+"os_features": "",
+"os_version": null,
+"size": 6750319077,
+"status": "active",
+"last_pulled": null,
+"last_pushed": "2023-10-26T19:54:47.693123Z"
+},
+{
+"architecture": "unknown",
+"features": "",
+"variant": null,
+"digest": "sha256:32c3b296170e84d37a98746cdd4f88b8f3394959869406995d2d45aa7bb8b300",
+"os": "unknown",
+"os_features": "",
+"os_version": null,
+"size": 1143,
+"status": "active",
+"last_pulled": null,
+"last_pushed": "2023-10-26T19:54:47.897449Z"
+}
+],
+"last_updated": "2023-10-26T19:54:48.274328Z",
+"last_updater": 6683897,
+"last_updater_username": "justinwlin",
+"name": "1.1",
+"repository": 22283861,
+"full_size": 6750319077,
+"v2": true,
+"tag_status": "active",
+"tag_last_pulled": null,
+"tag_last_pushed": "2023-10-26T19:54:48.274328Z",
+"media_type": "application/vnd.oci.image.index.v1+json",
+"content_type": "image",
+"digest": "sha256:d98fd7d0890a35b8b94cec98443b6c0d211bc4e62296690aafd9074a05ed4112"
+}
 ```
