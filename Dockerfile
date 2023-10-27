@@ -46,8 +46,15 @@ RUN python3.10 -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
 # Install Python dependencies, setuptools-rust, PyTorch, and download WhisperX
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install setuptools-rust huggingface_hub runpod torch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0 -f https://download.pytorch.org/whl/cu118/torch_stable.html
+RUN pip install --no-cache-dir --upgrade pip==21.* && \
+    pip install \
+        setuptools-rust==1.8.0 \
+        huggingface_hub==0.18.0 \
+        runpod==1.3.0 \
+        torch==2.0.0 \
+        torchvision==0.15.0 \
+        torchaudio==2.0.0 \
+        -f https://download.pytorch.org/whl/cu118/torch_stable.html
 
 # Clone and install WhisperX
 COPY ./whisperx /code
