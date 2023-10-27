@@ -26,10 +26,9 @@ RUN ln -s /usr/bin/python3.10 /usr/bin/python && \
 # Avoid use of cache directory with pip, Pin versions in pip
 RUN pip install --upgrade pip --no-cache-dir && \
     pip install \
-        --no-cache-dir \
         setuptools-rust==1.8.0 \
         huggingface_hub==0.18.0 \
-        runpod \
+        runpod==1.3.0 \
         torch==2.0.0 \
         torchvision==0.15.0 \
         torchaudio==2.0.0 \
@@ -47,9 +46,20 @@ COPY requirements.txt /app/requirements.txt
 # Avoid use of cache directory with pip
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Preload vad model
+RUN python3 -c 'from whisperx.vad import load_vad_model; load_vad_model("cpu");'
+
+# Preload fast-whisper
+RUN python3 -c 'import faster_whisper; model = faster_whisper.WhisperModel("'${WHISPER_MODEL}'")'
+
+# Preload align model
+COPY load_align_model.py .
+RUN python3 load_align_model.py ${LANG}
+
 # COPY the example.mp3 file to the container as a default testing audio file
 COPY example.mp3 /app/example.mp3
 COPY handler.py /app/handler.py
+COPY test_input.json /app/test_input.json
 
 STOPSIGNAL SIGINT
 
