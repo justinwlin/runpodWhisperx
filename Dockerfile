@@ -46,12 +46,12 @@ RUN python3.10 -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
 # Install Python dependencies, setuptools-rust, PyTorch, and download WhisperX
-RUN pip install --upgrade pip && \
+RUN pip install --no-cache-dir --upgrade pip && \
     pip install setuptools-rust huggingface_hub runpod torch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0 -f https://download.pytorch.org/whl/cu118/torch_stable.html
 
 # Clone and install WhisperX
 COPY ./whisperx /code
-RUN pip install /code
+RUN pip install --no-cache-dir /code
 
 # Preload Models
 RUN python -c 'from whisperx.vad import load_vad_model; load_vad_model("cpu");' && \
@@ -63,7 +63,7 @@ RUN python load_align_model.py ${LANG}
 
 # Copy and install application-specific requirements
 COPY requirements.txt /app/requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # COPY the example.mp3 file to the container as a default testing audio file
 COPY example.mp3 /app/example.mp3
