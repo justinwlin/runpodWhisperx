@@ -10,6 +10,14 @@ This is a Docker Image that runs the [WhisperX](https://github.com/m-bain/whispe
 }
 ```
 
+## Example How to Run the Docker Locally on ARM64
+```
+docker run --rm --gpus all -it justinwlin/runpodwhisperx:1.3 /bin/bash
+```
+
+If you want Mac instructions, I have a different repo setup for that:
+https://github.com/justinwlin/WhisperXMac
+
 ## How to Build This Docker Image
 
 You can replace anything that is `depot` with docker. I'm just using their service to build for amd64 platform, since I am on an arm64 platform on an M1 Mac.
