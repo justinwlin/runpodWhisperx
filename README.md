@@ -163,7 +163,6 @@ def get_runpod_job_status_from_id(id, RUNPOD_API_KEY):
     headers = {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + RUNPOD_API_KEY,
-        "Cookie": "__cflb=02DiuEDmJ1gNRaog7Bucmr44gWmZj9b8Tittd5EhmroXS",
     }
 
     response = requests.get(url, headers=headers).json()
