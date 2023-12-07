@@ -65,6 +65,8 @@ This is assuming that you install requirements such as anything listed on the WH
 # Example Functions of me calling the runpod:
 
 ```
+SERVER_ENDPOINT = "XXXXXXXX"
+
 def send_and_auto_async_request_runpod_subtitler(base64_string, RUNPOD_API_KEY):
     """
     Automatically makes an async request to runpod and keeps checking the status until the job is completed.
