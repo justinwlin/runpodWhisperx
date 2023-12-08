@@ -73,8 +73,18 @@ Without a start/end:
  {"word": "Hello"},
 
 This is an error I caught after checking through my logs, and is just something about the model. Personally, I generated a sml transcription, by just asking chatgpt to write me a script, by giving it the word_segment / segment output I got, and at that time, it all had start/end points, but I had a rare transcription where it didn't have a start/end.
+# You can encode your audio using:
+```
+import base64
 
-# Example Functions of me calling the runpod:
+
+def encodeAudioToBase64(audioPath):
+    with open(audioPath, "rb") as audio_file:
+        encoded_string = base64.b64encode(audio_file.read())
+    return encoded_string.decode("utf-8")
+```
+
+# Example Functions from my codebase of me calling the runpod:
 
 ```
 SERVER_ENDPOINT = "XXXXXXXX"
