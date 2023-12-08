@@ -84,7 +84,8 @@ def encodeAudioToBase64(audioPath):
     return encoded_string.decode("utf-8")
 ```
 
-# Example Functions from my codebase of me calling the runpod:
+# Example Functions from my application calling the Runpod API. 
+(This is just cut out from my application, adapt to your own usage, since things like SubtitlerResponse type won't exist for your app. This is just something my codebase has for autocompletion, but you don't need type definitions in Python)
 
 ```
 SERVER_ENDPOINT = "XXXXXXXX"
