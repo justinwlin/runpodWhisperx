@@ -62,6 +62,18 @@ https://docs.runpod.io/docs/local-testing
 
 This is assuming that you install requirements such as anything listed on the WHisperX repository and the runpod sdk.
 
+# EXTREMELY IMPORTANT NOTE
+
+Sometimes the output in the segment / word_segment, **DOES NOT** have a start/end time. 
+
+Ex. Sometimes this will be:
+ {"word": "Hello", "start": 0.27, "end": 0.61, "score": 0.862},
+
+Without a start/end:
+ {"word": "Hello"},
+
+This is an error I caught after checking through my logs, and is just something about the model. Personally, I generated a sml transcription, by just asking chatgpt to write me a script, by giving it the word_segment / segment output I got, and at that time, it all had start/end points, but I had a rare transcription where it didn't have a start/end.
+
 # Example Functions of me calling the runpod:
 
 ```
