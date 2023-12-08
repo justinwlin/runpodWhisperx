@@ -26,6 +26,15 @@ Windows / GPU
 whisperx example.mp3 --language en
 ```
 
+Or run the Runpod API Endpoint:
+https://blog.runpod.io/workers-local-api-server-introduced-with-runpod-python-0-9-13/
+
+Running the below will use the test_input.json
+```
+python handler.py
+```
+
+
 If you want Mac instructions, I have a different repo setup for that:
 https://github.com/justinwlin/WhisperXMac
 
