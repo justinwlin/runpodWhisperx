@@ -35,7 +35,7 @@ https://docs.runpod.io/docs/handler#testing-locally
 
 Running the below will use the test_input.json that is copied in. Or you can follow the runpod docs and do it through the shell.
 
-https://github.com/justinwlin/runpodWhisperx/blob/master/README.md#example-how-to-run-the-docker-locally-on-arm64
+https://github.com/justinwlin/runpodWhisperx/blob/master/test_input.json
 ```
 python handler.py
 ```
