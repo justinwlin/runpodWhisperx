@@ -15,6 +15,17 @@ This is a Docker Image that runs the [WhisperX](https://github.com/m-bain/whispe
 docker run --rm --gpus all -it justinwlin/runpodwhisperx:1.3 /bin/bash
 ```
 
+If you want to run it against th example mp3:
+Mac / CPU
+```
+whisperx example.mp3 --compute_type int8 --language en
+```
+
+Windows / GPU
+```
+whisperx example.mp3 --language en
+```
+
 If you want Mac instructions, I have a different repo setup for that:
 https://github.com/justinwlin/WhisperXMac
 
