@@ -10,6 +10,12 @@ This is a Docker Image that runs the [WhisperX](https://github.com/m-bain/whispe
 }
 ```
 
+## Other helpful repositories:
+WhisperX SRT Generator.
+(Repository I made to take in the segments result I get from WhisperX and generate SRT transcriptions). 
+
+https://github.com/justinwlin/WhisperXSRTGenerator
+
 ## Example How to Run the Docker Locally on ARM64
 ```
 docker run --rm --gpus all -it justinwlin/runpodwhisperx:1.3 /bin/bash
