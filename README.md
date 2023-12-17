@@ -116,224 +116,35 @@ def encodeAudioToBase64(audioPath):
 ```
 
 # Example Functions from my application calling the Runpod API. 
-(This is just cut out from my application, adapt to your own usage, since things like SubtitlerResponse type won't exist for your app. This is just something my codebase has for autocompletion, but you don't need type definitions in Python)
+Clientside Helper function to call Runpod deployed API:
+(You use this AFTER you deploy this docker image to Runpod so you can use this repository as an API.)
 
-```
-SERVER_ENDPOINT = "XXXXXXXX"
+Clientside helper functions to call Runpod deployed API:
 
-def send_and_auto_async_request_runpod_subtitler(base64_string, RUNPOD_API_KEY):
-    """
-    Automatically makes an async request to runpod and keeps checking the status until the job is completed.
+https://github.com/justinwlin/runpodWhisperx
 
-    @param
-    base64_string: The base64 string of the audio file
-    RUNPOD_API_KEY: The API key for Runpod
+Helper functions to generate SRT transcriptions:
 
-    @return
-    outputResponse: The response from Runpod. Structured as:
-    {
-        "status": "COMPLETED",
-        "output": {
-            "segments": [
-                {
-                    "start": 0.27,
-                    "end": 1.632,
-                    "text": " Hello world.",
-                    "words": [
-                        {"word": "Hello", "start": 0.27, "end": 0.61, "score": 0.862},
-                        {"word": "world.", "start": 0.69, "end": 1.091, "score": 0.779},
-                    ],
-                },
-            ...
-            "words_segments": [
-            {
-                "start": 0.27,
-                "end": 1.632,
-                "text": " Hello"
-            }
-         ]
-        }
-    }
-    """
-    jobId = send_async_request_runpod_subtitler(
-        base64_string=base64_string, RUNPOD_API_KEY=RUNPOD_API_KEY
+https://github.com/justinwlin/WhisperXSRTGenerator
+
+## Usage Example
+``` python
+    # Grab the output path sound and encode it to base64 string
+    base64AudioString = encodeAudioToBase64("./output.mp3")
+
+    # Calling my helper functions to call the Runpod API
+    apiResponse = transcribe_audio(
+        base64_string=base64AudioString,
+        runpod_api_key=RUNPOD_API_KEY,
+        server_endpoint=SERVER_ENDPOINT,
+        polling_interval=20
     )
-    outputResponse = get_runpod_job_status_from_id(jobId, RUNPOD_API_KEY=RUNPOD_API_KEY)
-    jobStatus = outputResponse["status"]  # Will be either "IN_PROGRESS" or "COMPLETED"
-    # Keep checking every minute until the job is completed
-    while jobStatus == "IN_PROGRESS" or jobStatus == "IN_QUEUE":
-        time.sleep(60)  # Wait for 1 minute
-        outputResponse = get_runpod_job_status_from_id(
-            jobId, RUNPOD_API_KEY=RUNPOD_API_KEY
-        )
-        print("Current output Response: ", outputResponse)
-        jobStatus = outputResponse["status"]
-    outputResponse = outputResponse["output"]
-    return outputResponse
 
+    apiResponseOutput = apiResponse["output"]
 
-def send_async_request_runpod_subtitler(base64_string, RUNPOD_API_KEY):
-    """
-    Sends an async request to Runpod and returns the job id.
-
-    @param
-    base64_string: The base64 string of the audio file
-    RUNPOD_API_KEY: The API key for Runpod
-
-    @return
-    jobId: The job id of the request
-    """
-    url = f"https://api.runpod.ai/v2/{SERVER_ENDPOINT}/run"
-
-    payload = json.dumps({"input": {"audio_base_64": base64_string}})
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + RUNPOD_API_KEY,
-    }
-
-    response = requests.post(url, headers=headers, data=payload).json()
-    return response["id"]
-
-
-def get_runpod_job_status_from_id(id, RUNPOD_API_KEY):
-    """
-    Grabs a job status from Runpod using the job id.
-
-    @param
-    id: The job id of the request
-    RUNPOD_API_KEY: The API key for Runpod
-
-    @return
-    outputResponse: The response from Runpod. Structured as:
-    {
-        "status": "COMPLETED",
-        "output": [{...}...]
-    }
-    Or if the job is still in progress/in Queue:
-    {
-        "status": "IN_PROGRESS" / "IN_QUEUE
-    }
-    """
-    url = f"https://api.runpod.ai/v2/{SERVER_ENDPOINT}/status/{id}"
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + RUNPOD_API_KEY,
-    }
-
-    response = requests.get(url, headers=headers).json()
-    print("Response from Runpod: ", response)
-
-    if response["status"] == "IN_PROGRESS" or response["status"] == "IN_QUEUE":
-        return {"status": response["status"]}
-    else:
-        return {
-            "status": "COMPLETED",
-            "output": response["output"],
-        }
-
-    return response
-
-
-def send_synchronous_request_runpod_subtitler(
-    base64_string: str, RUNPOD_API_KEY: str, mock: bool = False
-) -> SubtitlerResponse:
-    """
-    Sends a synchronous request to Runpod and returns the response. Can potentially time out if the Runpod server takes too long.
-
-    @param
-    base64_string: The base64 string of the audio file
-    RUNPOD_API_KEY: The API key for Runpod
-    mock: If true, returns a mock response
-
-    @return
-    outputResponse: The response from Runpod. Structured as:
-    {
-        "segments": [
-            {
-                "start": 0.27,
-                "end": 1.632,
-                "text": " Hello world.",
-                "words": [
-                    {"word": "Hello", "start": 0.27, "end": 0.61, "score": 0.862},
-                    {"word": "world.", "start": 0.69, "end": 1.091, "score": 0.779},
-                ],
-            },
-        ...
-        "words_segments": [
-        {
-            "start": 0.27,
-            "end": 1.632,
-            "text": " Hello"
-        }
-        ]
-    }
-    """
-    if mock == True:
-        return {
-            "segments": [
-                {
-                    "start": 0.27,
-                    "end": 1.632,
-                    "text": " Hello world.",
-                    "words": [
-                        {"word": "Hello", "start": 0.27, "end": 0.61, "score": 0.862},
-                        {"word": "world.", "start": 0.69, "end": 1.091, "score": 0.779},
-                    ],
-                },
-                {
-                    "start": 1.632,
-                    "end": 3.055,
-                    "text": "Nice to meet you.",
-                    "words": [
-                        {"word": "Nice", "start": 1.632, "end": 1.913, "score": 0.868},
-                        {"word": "to", "start": 1.953, "end": 2.033, "score": 0.832},
-                        {"word": "meet", "start": 2.093, "end": 2.274, "score": 0.788},
-                        {"word": "you.", "start": 2.294, "end": 2.454, "score": 0.849},
-                    ],
-                },
-                {
-                    "start": 3.055,
-                    "end": 5.1,
-                    "text": "My name is John Doe.",
-                    "words": [
-                        {"word": "My", "start": 3.055, "end": 3.216, "score": 0.996},
-                        {"word": "name", "start": 3.276, "end": 3.476, "score": 0.979},
-                        {"word": "is", "start": 3.556, "end": 3.637, "score": 0.63},
-                        {"word": "John", "start": 3.737, "end": 4.017, "score": 0.684},
-                        {"word": "Doe.", "start": 4.057, "end": 4.358, "score": 0.531},
-                    ],
-                },
-                {
-                    "start": 5.1,
-                    "end": 6.803,
-                    "text": "Here's a funny story about a dog.",
-                    "words": [
-                        {"word": "Here's", "start": 5.1, "end": 5.4, "score": 0.619},
-                        {"word": "a", "start": 5.44, "end": 5.46, "score": 0.999},
-                        {"word": "funny", "start": 5.52, "end": 5.781, "score": 0.812},
-                        {"word": "story", "start": 5.841, "end": 6.162, "score": 0.789},
-                        {"word": "about", "start": 6.222, "end": 6.422, "score": 0.901},
-                        {"word": "a", "start": 6.462, "end": 6.482, "score": 0.999},
-                        {"word": "dog.", "start": 6.523, "end": 6.803, "score": 0.993},
-                    ],
-                },
-            ]
-        }
-
-    url = f"https://api.runpod.ai/v2/{SERVER_ENDPOINT}/runsync"
-
-    payload = json.dumps({"input": {"audio_base_64": base64_string}})
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + RUNPOD_API_KEY,
-    }
-
-    response = requests.post(url, headers=headers, data=payload).json()
-    print("Response from Runpod: ", response)
-    output = response["output"]
-    if output == None or output == []:
-        raise Exception("No output from Runpod")
-
-    return output
+    # Calling my SRT Generator helper functions to generate SRT transcriptions
+    srtConverter = SRTConverter(apiResponseOutput["segments"])
+    srtConverter.adjust_word_per_segment(words_per_segment=5)
+    srtString = srtConverter.to_srt_highlight_word()
+    srtConverter.write_to_file("output.srt", srtString)
 ```
