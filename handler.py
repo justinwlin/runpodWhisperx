@@ -12,18 +12,18 @@ compute_type = os.environ.get('COMPUTE_TYPE', 'float16') #int8 if on Mac
 batch_size = 16 # reduce if low on GPU mem
 language_code = "en"
 
-def base64_to_tempfile(base64_file: str) -> str:
-    '''
-    Convert base64 file to tempfile.
+def base64_to_tempfile(base64_data):
+    """
+    Decode base64 data and write it to a temporary file.
+    Returns the path to the temporary file.
+    """
+    # Decode the base64 data to bytes
+    audio_data = base64.b64decode(base64_data)
 
-    Parameters:
-    base64_file (str): Base64 file
-
-    Returns:
-    str: Path to tempfile
-    '''
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
-        temp_file.write(base64.b64decode(base64_file))
+    # Create a temporary file and write the decoded data
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.mp3')
+    with open(temp_file.name, 'wb') as file:
+        file.write(audio_data)
 
     return temp_file.name
 
