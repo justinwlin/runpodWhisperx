@@ -45,19 +45,12 @@ def handler(event):
     audio = whisperx.load_audio(audio_input)
     # Transcribe the audio
     result = model.transcribe(audio, batch_size=batch_size, language=language_code, print_progress=True)
-    print("Before alignment")
-    print(result) # before alignment
 
     # 2. Align whisper output
     model_a, metadata = whisperx.load_align_model(language_code=language_code, device=device)
     result = whisperx.align(result["segments"], model_a, metadata, audio, device)
-
-    print(" ---- Segments Alignment ---- ")
     print(result["segments"]) # after alignment
-    print()
-    print(" ---- Word Alignment ---- ")
-    print(result["word_segments"])
-    print('--- End of Word Alignment ---')
+
 
     return result
 
