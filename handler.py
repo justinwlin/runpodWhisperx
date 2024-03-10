@@ -42,10 +42,20 @@ def download_file(url):
     return temp_file.name
 
 def handler(event):
-    '''
+    """
     Run inference on the model.
-    Returns output path, width the seed used to generate the image.
-    '''
+
+    Args:
+        event (dict): The input event containing the audio data.
+            The event should have the following structure:
+            {
+                "input": {
+                    "audio_base_64": str,  # Base64-encoded audio data (optional)
+                    "audio_url": str       # URL of the audio file (optional)
+                }
+            }
+            Either "audio_base_64" or "audio_url" must be provided.
+    """
     job_input = event['input']
     job_input_audio_base_64 = job_input.get('audio_base_64')
     job_input_audio_url = job_input.get('audio_url')
@@ -57,21 +67,25 @@ def handler(event):
         # If there is an URL
         audio_input = download_file(job_input_audio_url)
     else:
-        raise Exception("No audio input provided")
-    
-    # 1. Transcribe with original whisper (batched)
-    model = whisperx.load_model("small", device, compute_type=compute_type, language="en")
+        return "No audio input provided"
 
-    # Load the audio
-    audio = whisperx.load_audio(audio_input)
-    # Transcribe the audio
-    result = model.transcribe(audio, batch_size=batch_size, language=language_code, print_progress=True)
+    try:
+        # 1. Transcribe with original whisper (batched)
+        model = whisperx.load_model("small", device, compute_type=compute_type, language="en")
+        # Load the audio
+        audio = whisperx.load_audio(audio_input)
+        # Transcribe the audio
+        result = model.transcribe(audio, batch_size=batch_size, language=language_code, print_progress=True)
 
-    # 2. Align whisper output
-    model_a, metadata = whisperx.load_align_model(language_code=language_code, device=device)
-    result = whisperx.align(result["segments"], model_a, metadata, audio, device)
-    print(result["segments"]) # after alignment
-    return result
+        # 2. Align whisper output
+        model_a, metadata = whisperx.load_align_model(language_code=language_code, device=device)
+        result = whisperx.align(result["segments"], model_a, metadata, audio, device)
+        print(result["segments"])
+
+        # after alignment
+        return result
+    except:
+        return "Error transcribing audio"
 
 runpod.serverless.start({
     "handler": handler
